@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电商后台系统 - Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0f1119;
+            font-family: -apple-system, "Microsoft YaHei", sans-serif;
+            color: #e0e0f0;
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 220px;
+            background: #13151f;
+            border-right: 1px solid rgba(255,255,255,0.06);
+            padding: 20px 0;
+            flex-shrink: 0;
+        }
+        .sidebar .logo {
+            padding: 0 20px 20px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 12px;
+        }
+        .sidebar .nav-item {
+            padding: 11px 20px;
+            font-size: 13px;
+            color: #8090b0;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sidebar .nav-item:hover, .sidebar .nav-item.active {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+        .main {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        .main h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: white;
+        }
+        .stats {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .stat {
+            flex: 1;
+            min-width: 140px;
+            padding: 18px;
+            background: #13151f;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .stat .label { font-size: 12px; color: #506080; margin-bottom: 6px; }
+        .stat .num { font-size: 24px; font-weight: 700; color: white; }
+        .stat .tip { font-size: 11px; margin-top: 4px; }
+        .stat .tip.good { color: #00e676; }
+        .stat .tip.warn { color: #ff9800; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #13151f;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 11px;
+            color: #506080;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        td {
+            padding: 12px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+        .badge.success { background: rgba(0,230,118,0.15); color: #00e676; }
+        .badge.pending { background: rgba(255,152,0,0.15); color: #ff9800; }
+        .badge.info { background: rgba(102,126,234,0.15); color: #667eea; }
+        .action-btn {
+            padding: 5px 12px;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            background: transparent;
+            color: #8090b0;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+        .action-btn:hover { border-color: #667eea; color: #667eea; }
+        .back-link { text-align: center; padding: 16px; }
+        .back-link a { color: #6b7280; text-decoration: none; font-size: 12px; }
+        @media (max-width: 700px) {
+            .sidebar { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">📦 AdminPanel</div>
+        <div class="nav-item active">📊 数据概览</div>
+        <div class="nav-item">📦 商品管理</div>
+        <div class="nav-item">📋 订单列表</div>
+        <div class="nav-item">👥 用户管理</div>
+        <div class="nav-item">⚙️ 系统设置</div>
+    </div>
+
+    <div class="main">
+        <h2>📊 数据概览</h2>
+        <div class="stats">
+            <div class="stat">
+                <div class="label">总销售额</div>
+                <div class="num">¥1,284,560</div>
+                <div class="tip good">↑ 15.3% 同比</div>
+            </div>
+            <div class="stat">
+                <div class="label">订单总数</div>
+                <div class="num">28,471</div>
+                <div class="tip good">↑ 8.2% 同比</div>
+            </div>
+            <div class="stat">
+                <div class="label">在售商品</div>
+                <div class="num">1,245</div>
+                <div class="tip warn">↓ 12 件下架</div>
+            </div>
+            <div class="stat">
+                <div class="label">注册用户</div>
+                <div class="num">83,920</div>
+                <div class="tip good">↑ 22.1% 同比</div>
+            </div>
+        </div>
+
+        <h2 style="font-size:16px; margin-bottom:14px;">📋 最近订单</h2>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr><th>订单号</th><th>客户</th><th>商品</th><th>金额</th><th>状态</th><th>时间</th><th>操作</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#ORD-20240501</td><td>张三</td><td>iPhone 15 Pro</td><td>¥8,999</td>
+                        <td><span class="badge success">已完成</span></td><td>2024-05-01</td>
+                        <td><button class="action-btn">详情</button></td>
+                    </tr>
+                    <tr>
+                        <td>#ORD-20240502</td><td>李四</td><td>MacBook Air M3</td><td>¥10,999</td>
+                        <td><span class="badge info">配送中</span></td><td>2024-05-02</td>
+                        <td><button class="action-btn">详情</button></td>
+                    </tr>
+                    <tr>
+                        <td>#ORD-20240503</td><td>王五</td><td>AirPods Pro 2</td><td>¥1,899</td>
+                        <td><span class="badge pending">待付款</span></td><td>2024-05-02</td>
+                        <td><button class="action-btn">催付</button></td>
+                    </tr>
+                    <tr>
+                        <td>#ORD-20240504</td><td>赵六</td><td>Sony WH-1000XM5</td><td>¥2,499</td>
+                        <td><span class="badge success">已完成</span></td><td>2024-05-03</td>
+                        <td><button class="action-btn">详情</button></td>
+                    </tr>
+                    <tr>
+                        <td>#ORD-20240505</td><td>孙七</td><td>iPad Pro 12.9</td><td>¥7,299</td>
+                        <td><span class="badge pending">待发货</span></td><td>2024-05-03</td>
+                        <td><button class="action-btn">发货</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="back-link"><a href="../index.html">← 返回主页</a></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据大屏 Dashboard - Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #070b1a;
+            font-family: -apple-system, "Microsoft YaHei", sans-serif;
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .top-bar {
+            text-align: center;
+            padding: 10px 0 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 20px;
+        }
+        .top-bar h1 {
+            font-size: 26px;
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .top-bar span { color: #506080; font-size: 12px; }
+        .stats-row {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .stat-box {
+            flex: 1;
+            min-width: 160px;
+            padding: 18px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+        }
+        .stat-box .label { font-size: 12px; color: #506080; margin-bottom: 6px; }
+        .stat-box .value { font-size: 28px; font-weight: bold; background: linear-gradient(135deg, #00d2ff, #3a7bd5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-box .change { font-size: 11px; margin-top: 4px; }
+        .change.up { color: #00e676; }
+        .change.down { color: #ff5252; }
+        .charts {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            grid-template-rows: 280px 280px;
+            gap: 14px;
+        }
+        .chart-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            padding: 14px;
+        }
+        .chart-box.full { grid-column: 1 / -1; }
+        .chart-box h3 { font-size: 13px; color: #8090b0; margin-bottom: 6px; }
+        .chart-inner { width: 100%; height: calc(100% - 24px); }
+        .back-link { text-align: center; margin-top: 24px; }
+        .back-link a { color: #00d2ff; text-decoration: none; font-size: 13px; }
+
+        @media (max-width: 700px) {
+            .charts { grid-template-columns: 1fr; grid-template-rows: auto; }
+            .chart-box { height: 240px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h1>📊 实时数据监控中心</h1>
+        <span>数据更新时间：<span id="time">--</span></span>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-box">
+            <div class="label">今日销售额</div>
+            <div class="value" id="sales">¥128,450</div>
+            <div class="change up">↑ 12.5%</div>
+        </div>
+        <div class="stat-box">
+            <div class="label">订单数</div>
+            <div class="value" id="orders">2,847</div>
+            <div class="change up">↑ 8.3%</div>
+        </div>
+        <div class="stat-box">
+            <div class="label">活跃用户</div>
+            <div class="value" id="users">15,620</div>
+            <div class="change up">↑ 5.7%</div>
+        </div>
+        <div class="stat-box">
+            <div class="label">转化率</div>
+            <div class="value" id="rate">3.24%</div>
+            <div class="change down">↓ 0.3%</div>
+        </div>
+    </div>
+
+    <div class="charts">
+        <div class="chart-box">
+            <h3>销售趋势 (近30天)</h3>
+            <div class="chart-inner" id="chart1"></div>
+        </div>
+        <div class="chart-box">
+            <h3>品类占比</h3>
+            <div class="chart-inner" id="chart2"></div>
+        </div>
+        <div class="chart-box full">
+            <h3>实时流量</h3>
+            <div class="chart-inner" id="chart3"></div>
+        </div>
+    </div>
+
+    <div class="back-link"><a href="../index.html">← 返回主页</a></div>
+
+    <script>
+        function now() {
+            const d = new Date();
+            document.getElementById('time').textContent =
+                d.getFullYear() + '-' +
+                String(d.getMonth()+1).padStart(2,'0') + '-' +
+                String(d.getDate()).padStart(2,'0') + ' ' +
+                String(d.getHours()).padStart(2,'0') + ':' +
+                String(d.getMinutes()).padStart(2,'0') + ':' +
+                String(d.getSeconds()).padStart(2,'0');
+        }
+        now();
+        setInterval(now, 1000);
+
+        function simulate() {
+            document.getElementById('sales').textContent = '¥' + (120000 + Math.random() * 20000).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            document.getElementById('orders').textContent = (2800 + Math.floor(Math.random() * 100)).toLocaleString();
+            document.getElementById('users').textContent = (15500 + Math.floor(Math.random() * 300)).toLocaleString();
+            document.getElementById('rate').textContent = (3.1 + Math.random() * 0.4).toFixed(2) + '%';
+        }
+        setInterval(simulate, 3000);
+
+        const darkTheme = {
+            textStyle: { color: '#8090b0' },
+            grid: { top: 10, right: 10, bottom: 10, left: 40 }
+        };
+
+        // 销售趋势
+        const c1 = echarts.init(document.getElementById('chart1'));
+        const days = Array.from({length: 30}, (_, i) => i + 1 + '日');
+        const values = Array.from({length: 30}, () => Math.floor(Math.random() * 15000 + 5000));
+        c1.setOption({
+            ...darkTheme,
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: days, axisLine: { lineStyle: { color: '#203050' } } },
+            yAxis: { type: 'value', splitLine: { lineStyle: { color: '#152030' } } },
+            series: [{
+                data: values, type: 'line', smooth: true,
+                lineStyle: { color: '#00d2ff', width: 2 },
+                areaStyle: { color: new echarts.graphic.LinearGradient(0,0,0,1, [
+                    { offset: 0, color: 'rgba(0,210,255,0.3)' },
+                    { offset: 1, color: 'rgba(0,210,255,0)' }
+                ])},
+                itemStyle: { color: '#00d2ff' },
+                symbol: 'none'
+            }]
+        });
+
+        // 品类饼图
+        const c2 = echarts.init(document.getElementById('chart2'));
+        c2.setOption({
+            tooltip: { trigger: 'item' },
+            series: [{
+                type: 'pie', radius: ['50%', '80%'],
+                center: ['50%', '55%'],
+                label: { color: '#8090b0', fontSize: 10 },
+                data: [
+                    { value: 35, name: '服装', itemStyle: { color: '#00d2ff' } },
+                    { value: 25, name: '数码', itemStyle: { color: '#3a7bd5' } },
+                    { value: 20, name: '食品', itemStyle: { color: '#f5576c' } },
+                    { value: 15, name: '家居', itemStyle: { color: '#f6d365' } },
+                    { value: 5, name: '其他', itemStyle: { color: '#506080' } }
+                ]
+            }]
+        });
+
+        // 实时流量
+        const c3 = echarts.init(document.getElementById('chart3'));
+        let flowData = Array.from({length: 24}, () => Math.floor(Math.random() * 300 + 100));
+        c3.setOption({
+            ...darkTheme,
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: Array.from({length: 24}, (_, i) => i + ':00'), axisLine: { lineStyle: { color: '#203050' } } },
+            yAxis: { type: 'value', splitLine: { lineStyle: { color: '#152030' } } },
+            series: [{
+                data: flowData, type: 'bar',
+                itemStyle: {
+                    color: new echarts.graphic.LinearGradient(0,0,0,1, [
+                        { offset: 0, color: '#00d2ff' },
+                        { offset: 1, color: '#3a7bd5' }
+                    ]),
+                    borderRadius: [4, 4, 0, 0]
+                }
+            }]
+        });
+
+        setInterval(() => {
+            flowData.shift();
+            flowData.push(Math.floor(Math.random() * 300 + 100));
+            c3.setOption({ series: [{ data: flowData }] });
+        }, 2000);
+
+        window.addEventListener('resize', () => { c1.resize(); c2.resize(); c3.resize(); });
+    </script>
+</body>
+</html>

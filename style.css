@@ -694,6 +694,68 @@ section h2::after {
     border-radius: 12px;
 }
 
+/* ===== 服务报价 ===== */
+#services {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.service-list {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.service-item {
+    flex: 1;
+    min-width: 240px;
+    max-width: 360px;
+    padding: 28px 24px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.service-item:hover {
+    border-color: rgba(240, 147, 251, 0.3);
+    background: rgba(240, 147, 251, 0.05);
+    transform: translateY(-3px);
+}
+
+.service-item .service-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+
+.service-item h3 {
+    font-size: 15px;
+    color: white;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.service-item p {
+    font-size: 13px;
+    color: #8888a8;
+    line-height: 1.6;
+    margin-bottom: 14px;
+}
+
+.service-price {
+    display: inline-block;
+    padding: 4px 14px;
+    background: rgba(240, 147, 251, 0.12);
+    color: #f093fb;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border: 1px solid rgba(240, 147, 251, 0.25);
+}
+
 /* ===== 联系 ===== */
 #contact {
     max-width: 650px;
